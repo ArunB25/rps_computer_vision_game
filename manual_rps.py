@@ -1,4 +1,5 @@
 import random
+import camera_rps
 
 def play():
     def get_computer_choice():
@@ -38,7 +39,9 @@ def play():
             return("tie")
     
     computer_choice = get_computer_choice()
-    user_choice = get_user_choice()
+    ##user_choice = get_user_choice()
+    user_choice = camera_rps.get_prediction
+    print(user_choice)
     return(get_winner(computer_choice, user_choice))    
 
 
