@@ -37,7 +37,7 @@ print(prediction)
 ```
 Manual version of Rock-Paper-Scissors created, which uses python random module to make computers decision and takes user input.
 
-'''python """
+```python """
 import random
 
 def play():
@@ -85,4 +85,5 @@ def play():
 if __name__ == '__main__':
 
     print(play())
-""" '''
+
+""" ```
