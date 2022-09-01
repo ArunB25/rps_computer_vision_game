@@ -24,8 +24,10 @@ if __name__ == '__main__':
         prediction = model.predict(data)
         
         # Press q to close the window
-        #print(prediction)
+        print(prediction)
         rps_prediction = np.argmax(prediction)
+        print(rps_prediction)
+
 
         if rps_prediction == 0:
             guess = "Rock"  
@@ -49,8 +51,3 @@ if __name__ == '__main__':
     # Destroy all the windows
     cv2.destroyAllWindows()
     
-
-    
-
-
-
