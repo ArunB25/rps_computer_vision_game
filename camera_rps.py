@@ -32,7 +32,6 @@ def play():
         # Destroy all the windows
         cv2.destroyAllWindows()
 
-        print(rps_prediction)
         if rps_prediction == 0:
             return("rock")
         elif rps_prediction == 1:
@@ -74,10 +73,24 @@ def play():
             return("tie")
         else:
             return("Error in user input")
-
+    
+    def countdown():
+        start_time = time.time()
+        current_time = time.time()
+        print("3")
+        while start_time + 3 != current_time:
+            if current_time == start_time +1:
+                print("2")
+            elif current_time == start_time + 2:
+                print("1")
+            current_time = time.time()
+        print("show hand")
+    
+    
     computer_choice = get_computer_choice()
-    user_choice = get_prediction()
+    countdown()
 
+    user_choice = get_prediction()
     while user_choice == "nothing":
         user_choice = get_prediction()
 

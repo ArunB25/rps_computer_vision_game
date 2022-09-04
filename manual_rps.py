@@ -1,5 +1,4 @@
 import random
-import camera_rps
 
 def play():
     def get_computer_choice():
