@@ -58,17 +58,17 @@ def play():
         Returns the winner of Rock,Paper,Scissors from the Computer and User choices
         '''
         if computer_choice == "rock" and user_choice == "paper":
-            return("user wins")
+            return("user")
         elif computer_choice == "rock" and user_choice == "scissors":
-            return("computer wins")
+            return("computer")
         elif computer_choice == "paper" and user_choice == "scissors":
-            return("user wins")
+            return("user")
         elif computer_choice == "paper" and user_choice == "rock":
-            return("computer wins")
+            return("computer")
         elif computer_choice == "scissors" and user_choice == "rock":
-            return("user wins")
+            return("user")
         elif computer_choice == "scissors" and user_choice == "paper":
-            return("computer wins")
+            return("computer")
         elif computer_choice == user_choice:
             return("tie")
         else:
@@ -86,17 +86,35 @@ def play():
             current_time = time.time()
         print("show hand")
     
-    
-    computer_choice = get_computer_choice()
-    countdown()
+    user_wins = 0
+    computer_wins = 0
 
-    user_choice = get_prediction()
-    while user_choice == "nothing":
+    while user_wins < 3 and computer_wins < 3:
+        computer_choice = get_computer_choice()
+        countdown()
+
         user_choice = get_prediction()
+        while user_choice == "nothing":
+            user_choice = get_prediction()
 
-    print("User guessed:", user_choice)
-    print("computer guessed:", computer_choice)
-    return(get_winner(computer_choice, user_choice))    
+        print("User guessed:", user_choice)
+        print("computer guessed:", computer_choice)
+        winner = get_winner(computer_choice, user_choice)
+
+        if winner == "user":
+            user_wins += 1
+            print("User won! Score User ", user_wins , "| Computer ", computer_wins)
+        elif winner == "computer":
+            computer_wins += 1
+            print("Computer won! Score User ", user_wins , "| Computer ", computer_wins)
+        elif winner == "tie":
+            print("That was a Tie Score User ", user_wins , "| Computer ", computer_wins)
+
+    if user_wins == 3:
+        return("User Won Overall")
+    elif computer_wins == 3:
+        return("Computer Won Overall")
+    
                 
         
 
