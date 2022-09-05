@@ -10,7 +10,7 @@ import random
 def play():
     def get_prediction():
         '''
-        takes images from the camera for 2.5 seconds and returns the mode guess from the machine learning Rock,Paper,Scissors model
+        takes images from the camera and returns the mode guess from the machine learning Rock,Paper,Scissors model
         '''
 
         model = load_model('keras_model.h5')
@@ -79,20 +79,24 @@ def play():
         current_time = time.time()
         print("3")
         while start_time + 3 != current_time:
+
             if current_time == start_time +1:
-                print("2")
+                    print("2")
             elif current_time == start_time + 2:
                 print("1")
             current_time = time.time()
+        
         print("show hand")
     
+
+    #Game initialisation
     user_wins = 0
     computer_wins = 0
 
     while user_wins < 3 and computer_wins < 3:
+
         computer_choice = get_computer_choice()
         countdown()
-
         user_choice = get_prediction()
         while user_choice == "nothing":
             user_choice = get_prediction()
