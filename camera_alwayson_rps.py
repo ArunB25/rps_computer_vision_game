@@ -104,6 +104,7 @@ class play_rps:
         """
         start_time = time.time()
         current_time = time.time()
+        countdown_stage = 1 #countdown stage only allows if statement that acts between times to occur ones, to prevent unecassary repetition of if statements
         self.prompt_string = "Show hand in 3"
         
         while True:
@@ -111,10 +112,12 @@ class play_rps:
             self.video_prediction()
             self.video_overlay()
 
-            if current_time >= start_time +1 and current_time <= start_time +2 :
+            if current_time >= start_time +1 and current_time <= start_time +2 and countdown_stage != 2:
                     self.prompt_string = "Show hand in 2"    
-            elif current_time >= start_time + 2 and current_time <= start_time +3:
+                    countdown_stage = 2
+            elif current_time >= start_time + 2 and current_time <= start_time +3 and countdown_stage != 3:
                     self.prompt_string = "Show hand in 1"
+                    countdown_stage = 3
             elif current_time >= start_time + 3:
                     break   
             
@@ -126,6 +129,7 @@ class play_rps:
         """
         start_time = time.time()
         current_time = time.time()
+        countdown_stage = 1
         self.prompt_string = "Next round in 5"
 
         while True:
@@ -133,22 +137,27 @@ class play_rps:
             self.video_prediction()
             self.video_overlay()
 
-            if current_time >= start_time +1 and current_time <= start_time +2 :
-                self.prompt_string = "Next round in 4"    
-            elif current_time >= start_time + 2 and current_time <= start_time +3:
+            if current_time >= start_time +1 and current_time <= start_time +2 and countdown_stage != 2:
+                self.prompt_string = "Next round in 4"
+                countdown_stage = 2    
+            elif current_time >= start_time + 2 and current_time <= start_time +3 and countdown_stage != 3:
                 self.prompt_string = "Next round in 3"
-            elif current_time >= start_time + 3 and current_time <= start_time +4:
+                countdown_stage = 3
+            elif current_time >= start_time + 3 and current_time <= start_time +4 and countdown_stage != 4:
                 self.prompt_string = "Next round in 2"
-            elif current_time >= start_time + 4 and current_time <= start_time +5:
+                countdown_stage = 4
+            elif current_time >= start_time + 4 and current_time <= start_time +5 and countdown_stage != 5:
                 self.prompt_string = "Next round in 1"
                 self.user_choice_string = ""
                 self.computer_choice_string = ""
+                countdown_stage = 5
             elif current_time >= start_time + 5:
                 break
 
     def endgame_countdown(self):
         start_time = time.time()
         current_time = time.time()
+        countdown_stage = 1
         if self.user_wins == 3:
             self.winner_string = "User Won Overall!"
         elif self.computer_wins == 3:
@@ -159,16 +168,21 @@ class play_rps:
             current_time = time.time()
             self.video_prediction()
             self.video_overlay()
-            if current_time >= start_time +1 and current_time <= start_time +2 :
+
+            if current_time >= start_time +1 and current_time <= start_time +2 and countdown_stage != 2:
                 self.prompt_string = "Game Closes in 4"  
                 self.user_choice_string = ""
-                self.computer_choice_string = ""  
-            elif current_time >= start_time + 2 and current_time <= start_time +3:
+                self.computer_choice_string = ""
+                countdown_stage = 2  
+            elif current_time >= start_time + 2 and current_time <= start_time +3 and countdown_stage != 3:
                 self.prompt_string = "Game Closes in 3"
-            elif current_time >= start_time + 3 and current_time <= start_time +4:
+                countdown_stage = 3
+            elif current_time >= start_time + 3 and current_time <= start_time +4 and countdown_stage != 4:
                 self.prompt_string = "Game Closes in 2"
-            elif current_time >= start_time + 4 and current_time <= start_time +5:
+                countdown_stage = 4
+            elif current_time >= start_time + 4 and current_time <= start_time +5 and countdown_stage != 5:
                 self.prompt_string = "Game Closes in 1"
+                countdown_stage = 5
             elif current_time >= start_time + 5:
                 break
 
@@ -177,8 +191,8 @@ class play_rps:
 
         while True: 
             
-            self.video_prediction()
-            self.video_overlay()
+            #self.video_prediction()
+            #self.video_overlay()
             
             if cv2.waitKey(1) & 0xFF == ord('q'):   # Press q to close the window
                 break
