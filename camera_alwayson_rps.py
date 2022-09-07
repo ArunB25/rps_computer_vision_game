@@ -1,4 +1,5 @@
 import imp
+from operator import truediv
 from time import time
 from tkinter.tix import Tree
 import cv2
@@ -8,34 +9,6 @@ import time
 import random
 
 class play_rps:
-
-    def get_computer_choice(self):
-                '''
-                Returns random value of rock, paper or scissors
-                '''
-                options = ["rock","paper","scissors"]
-                self.computer_choice = random.choice(options)
-
-    def get_winner(self):
-            '''
-            Returns the winner of Rock,Paper,Scissors from the Computer and User choices
-            '''
-            if self.computer_choice == "rock" and self.user_choice == "paper":
-                return("user")
-            elif self.computer_choice == "rock" and self.user_choice == "scissors":
-                return("computer")
-            elif self.computer_choice == "paper" and self.user_choice == "scissors":
-                return("user")
-            elif self.computer_choice == "paper" and self.user_choice == "rock":
-                return("computer")
-            elif self.computer_choice == "scissors" and self.user_choice == "rock":
-                return("user")
-            elif self.computer_choice == "scissors" and self.user_choice == "paper":
-                return("computer")
-            elif self.computer_choice == self.user_choice:
-                return("tie")
-            else:
-                return("Error in user input")
 
     def __init__(self):
         '''
@@ -47,11 +20,46 @@ class play_rps:
         self.user_wins = 0
         self.computer_wins = 0
         self.game_stage = 5
-        self.prompt_string = "Start Game Press S"
+        self.prompt_string = "Game Started"
         self.quit_print = "Press Q to quit"
         self.winner_string = ""
         self.user_choice_string = ""
         self.computer_choice_string = ""
+
+    def get_computer_choice(self):
+                '''
+                Returns random value of rock, paper or scissors
+                '''
+                options = ["rock","paper","scissors"]
+                self.computer_choice = random.choice(options)
+
+    def get_winner(self):
+        '''
+        Gets the winner of Rock,Paper,Scissors from the Computer and User choices and updates overlay strings and winner counts
+        '''
+        if self.computer_choice == "rock" and self.user_choice == "paper":
+            winner = "user"
+        elif self.computer_choice == "paper" and self.user_choice == "scissors":
+             winner = "user"
+        elif self.computer_choice == "scissors" and self.user_choice == "rock":
+            winner = "user"
+        elif self.computer_choice == self.user_choice:
+            winner = "tie"
+        else:
+            winner = "computer"
+
+        self.user_choice_string = "User chose: {}".format(self.user_choice)
+        self.computer_choice_string = "Computer chose: {}".format(self.computer_choice)
+        if winner == "user":
+            self.user_wins += 1
+            self.winner_string = "User won! Score User {} | Computer {} ".format(self.user_wins, self.computer_wins)
+            self.game_stage = 5
+        elif winner == "computer":
+            self.computer_wins += 1
+            self.winner_string = "Computer won! Score User {} | Computer {} ".format(self.user_wins, self.computer_wins)
+            self.game_stage = 5
+        elif winner == "tie":
+            self.winner_string = "Tie! Score User {} | Computer {} ".format(self.user_wins, self.computer_wins)
 
     def video_prediction(self):
         '''
@@ -111,6 +119,58 @@ class play_rps:
                     break   
             
         self.prompt_string = "Show hand"
+    
+    def nextround_counter(self):
+        """
+        countdown from 5 whilst updating video frames and overlays
+        """
+        start_time = time.time()
+        current_time = time.time()
+        self.prompt_string = "Next round in 5"
+
+        while True:
+            current_time = time.time()
+            self.video_prediction()
+            self.video_overlay()
+
+            if current_time >= start_time +1 and current_time <= start_time +2 :
+                self.prompt_string = "Next round in 4"    
+            elif current_time >= start_time + 2 and current_time <= start_time +3:
+                self.prompt_string = "Next round in 3"
+            elif current_time >= start_time + 3 and current_time <= start_time +4:
+                self.prompt_string = "Next round in 2"
+            elif current_time >= start_time + 4 and current_time <= start_time +5:
+                self.prompt_string = "Next round in 1"
+                self.user_choice_string = ""
+                self.computer_choice_string = ""
+            elif current_time >= start_time + 5:
+                break
+
+    def endgame_countdown(self):
+        start_time = time.time()
+        current_time = time.time()
+        if self.user_wins == 3:
+            self.winner_string = "User Won Overall!"
+        elif self.computer_wins == 3:
+            self.winner_string = "Computer Won Overall"
+        self.prompt_string = "Game Closes in 5"
+
+        while True:
+            current_time = time.time()
+            self.video_prediction()
+            self.video_overlay()
+            if current_time >= start_time +1 and current_time <= start_time +2 :
+                self.prompt_string = "Game Closes in 4"  
+                self.user_choice_string = ""
+                self.computer_choice_string = ""  
+            elif current_time >= start_time + 2 and current_time <= start_time +3:
+                self.prompt_string = "Game Closes in 3"
+            elif current_time >= start_time + 3 and current_time <= start_time +4:
+                self.prompt_string = "Game Closes in 2"
+            elif current_time >= start_time + 4 and current_time <= start_time +5:
+                self.prompt_string = "Game Closes in 1"
+            elif current_time >= start_time + 5:
+                break
 
 
     def play(self):
@@ -122,95 +182,28 @@ class play_rps:
             
             if cv2.waitKey(1) & 0xFF == ord('q'):   # Press q to close the window
                 break
+    
+            self.showhand_countdown()
+            self.get_computer_choice()
+            self.user_choice = self.current_choice
+            
+            #while self.user_choice != "nothing":
+            #    self.video_prediction()
+            #    self.video_overlay()
+            #    self.user_choice = self.current_choice  
+
+            self.get_winner()
+            self.nextround_counter()
 
             if self.user_wins >= 3 or self.computer_wins >= 3:
-                self.game_stage = 7
-    
-            if self.game_stage == 1:
-                start_time = time.time()
-                current_time = time.time()
-                self.prompt_string = "Show hand in 3"
-                self.game_stage = 2
-            elif self.game_stage == 2:
-                current_time = time.time()
-                if current_time >= start_time +1 and current_time <= start_time +2 :
-                    self.prompt_string = "Show hand in 2"    
-                elif current_time >= start_time + 2 and current_time <= start_time +3:
-                    self.prompt_string = "Show hand in 1"
-                elif current_time >= start_time + 3:
-                    self.game_stage = 3    
-            elif self.game_stage == 3:
-                self.prompt_string = "Show hand"
-                self.get_computer_choice()
-                self.user_choice = self.current_choice
-                if self.user_choice != "nothing":
-                    self.game_stage = 4   
-            elif self.game_stage == 4:
-                winner = self.get_winner()
-                self.user_choice_string = "User chose: {}".format(self.user_choice)
-                self.computer_choice_string = "Computer chose: {}".format(self.computer_choice)
-                if winner == "user":
-                    self.user_wins += 1
-                    self.winner_string = "User won! Score User {} | Computer {} ".format(self.user_wins, self.computer_wins)
-                    self.game_stage = 5
-                elif winner == "computer":
-                    self.computer_wins += 1
-                    self.winner_string = "Computer won! Score User {} | Computer {} ".format(self.user_wins, self.computer_wins)
-                    self.game_stage = 5
-                elif winner == "tie":
-                    self.winner_string = "Tie! Score User {} | Computer {} ".format(self.user_wins, self.computer_wins)
-                    self.game_stage = 5
-            elif self.game_stage == 5:
-                start_time = time.time()
-                current_time = time.time()
-                self.prompt_string = "Next round in 5"
-                self.game_stage = 6
-            elif self.game_stage == 6:
-                current_time = time.time()
-                if current_time >= start_time +1 and current_time <= start_time +2 :
-                    self.prompt_string = "Next round in 4"    
-                elif current_time >= start_time + 2 and current_time <= start_time +3:
-                    self.prompt_string = "Next round in 3"
-                elif current_time >= start_time + 3 and current_time <= start_time +4:
-                    self.prompt_string = "Next round in 2"
-                elif current_time >= start_time + 4 and current_time <= start_time +5:
-                    self.prompt_string = "Next round in 1"
-                    self.user_choice_string = ""
-                    self.computer_choice_string = ""
-                elif current_time >= start_time + 5:
-                    self.game_stage = 1 
-            elif self.game_stage == 7:
-                start_time = time.time()
-                current_time = time.time()
-                if self.user_wins == 3:
-                    self.winner_string = "User Won Overall!"
-                elif self.computer_wins == 3:
-                    self.winner_string = "Computer Won Overall"
-                self.prompt_string = "Game Closes in 5"
-                self.user_wins = 0
-                self.computer_wins = 0
-                self.game_stage = 8
-            elif self.game_stage == 8:
-                current_time = time.time()
-                if current_time >= start_time +1 and current_time <= start_time +2 :
-                    self.prompt_string = "Game Closes in 4"  
-                    self.user_choice_string = ""
-                    self.computer_choice_string = ""  
-                elif current_time >= start_time + 2 and current_time <= start_time +3:
-                    self.prompt_string = "Game Closes in 3"
-                elif current_time >= start_time + 3 and current_time <= start_time +4:
-                    self.prompt_string = "Game Closes in 2"
-                elif current_time >= start_time + 4 and current_time <= start_time +5:
-                    self.prompt_string = "Game Closes in 1"
-                elif current_time >= start_time + 5:
-                    break
-        
-
+                self.endgame_countdown
+                # After the loop release the cap object
+                self.cap.release()
+                # Destroy all the windows
+                cv2.destroyAllWindows()
+                break
             
-        # After the loop release the cap object
-        self.cap.release()
-        # Destroy all the windows
-        cv2.destroyAllWindows()
+
 
 
 if __name__ == '__main__':
