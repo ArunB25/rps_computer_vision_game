@@ -19,12 +19,17 @@ class play_rps:
         self.data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
         self.user_wins = 0
         self.computer_wins = 0
-        self.game_stage = 5
-        self.prompt_string = "Game Started"
+        self.prompt_start = "Game Started"
         self.quit_print = "Press Q to quit"
         self.winner_string = ""
         self.user_choice_string = ""
         self.computer_choice_string = ""
+        self.timer = 3
+        self.showhand_counter = True
+        self.round_counter = False
+        self.endgame_counter = False
+
+
 
     def get_computer_choice(self):
                 '''
@@ -53,11 +58,9 @@ class play_rps:
         if winner == "user":
             self.user_wins += 1
             self.winner_string = "User won! Score User {} | Computer {} ".format(self.user_wins, self.computer_wins)
-            self.game_stage = 5
         elif winner == "computer":
             self.computer_wins += 1
             self.winner_string = "Computer won! Score User {} | Computer {} ".format(self.user_wins, self.computer_wins)
-            self.game_stage = 5
         elif winner == "tie":
             self.winner_string = "Tie! Score User {} | Computer {} ".format(self.user_wins, self.computer_wins)
 
@@ -90,132 +93,77 @@ class play_rps:
         """
         font = cv2.FONT_HERSHEY_SIMPLEX
         current_choice_string = "Current choice: {}".format(self.current_choice)
+        prompt_string = self.prompt_start + str(self.timer)
         cv2.putText(self.frame,current_choice_string,(30,60), font, 0.6, (10, 10, 200), 1, cv2.LINE_AA)
-        cv2.putText(self.frame,self.prompt_string,(30,40), font, 1, (10, 10, 10), 4, cv2.LINE_AA)
+        cv2.putText(self.frame,prompt_string,(30,40), font, 1, (10, 10, 10), 4, cv2.LINE_AA)
         cv2.putText(self.frame,self.quit_print,(535,10), font, 0.4, (10, 10, 10), 1, cv2.LINE_AA)
         cv2.putText(self.frame,self.winner_string,(30,470), font, 0.8, (10, 10, 10), 2, cv2.LINE_AA)
         cv2.putText(self.frame,self.user_choice_string,(30,420), font, 0.7, (10, 10, 10), 2, cv2.LINE_AA)
         cv2.putText(self.frame,self.computer_choice_string,(30,445), font, 0.7, (10, 10, 10), 2, cv2.LINE_AA)
         cv2.imshow('frame', self.frame)
 
-    def showhand_countdown(self):
-        """
-        countdown from 3 whilst updating video frames and overlays
-        """
-        start_time = time.time()
-        current_time = time.time()
-        countdown_stage = 1 #countdown stage only allows if statement that acts between times to occur ones, to prevent unecassary repetition of if statements
-        self.prompt_string = "Show hand in 3"
-        
-        while True:
-            current_time = time.time()
-            self.video_prediction()
-            self.video_overlay()
 
-            if current_time >= start_time +1 and current_time <= start_time +2 and countdown_stage != 2:
-                    self.prompt_string = "Show hand in 2"    
-                    countdown_stage = 2
-            elif current_time >= start_time + 2 and current_time <= start_time +3 and countdown_stage != 3:
-                    self.prompt_string = "Show hand in 1"
-                    countdown_stage = 3
-            elif current_time >= start_time + 3:
-                    break   
-            
-        self.prompt_string = "Show hand"
     
-    def nextround_counter(self):
-        """
-        countdown from 5 whilst updating video frames and overlays
-        """
-        start_time = time.time()
-        current_time = time.time()
-        countdown_stage = 1
-        self.prompt_string = "Next round in 5"
-
-        while True:
-            current_time = time.time()
-            self.video_prediction()
-            self.video_overlay()
-
-            if current_time >= start_time +1 and current_time <= start_time +2 and countdown_stage != 2:
-                self.prompt_string = "Next round in 4"
-                countdown_stage = 2    
-            elif current_time >= start_time + 2 and current_time <= start_time +3 and countdown_stage != 3:
-                self.prompt_string = "Next round in 3"
-                countdown_stage = 3
-            elif current_time >= start_time + 3 and current_time <= start_time +4 and countdown_stage != 4:
-                self.prompt_string = "Next round in 2"
-                countdown_stage = 4
-            elif current_time >= start_time + 4 and current_time <= start_time +5 and countdown_stage != 5:
-                self.prompt_string = "Next round in 1"
-                self.user_choice_string = ""
-                self.computer_choice_string = ""
-                countdown_stage = 5
-            elif current_time >= start_time + 5:
-                break
-
-    def endgame_countdown(self):
-        start_time = time.time()
-        current_time = time.time()
-        countdown_stage = 1
-        if self.user_wins == 3:
-            self.winner_string = "User Won Overall!"
-        elif self.computer_wins == 3:
-            self.winner_string = "Computer Won Overall"
-        self.prompt_string = "Game Closes in 5"
-
-        while True:
-            current_time = time.time()
-            self.video_prediction()
-            self.video_overlay()
-
-            if current_time >= start_time +1 and current_time <= start_time +2 and countdown_stage != 2:
-                self.prompt_string = "Game Closes in 4"  
-                self.user_choice_string = ""
-                self.computer_choice_string = ""
-                countdown_stage = 2  
-            elif current_time >= start_time + 2 and current_time <= start_time +3 and countdown_stage != 3:
-                self.prompt_string = "Game Closes in 3"
-                countdown_stage = 3
-            elif current_time >= start_time + 3 and current_time <= start_time +4 and countdown_stage != 4:
-                self.prompt_string = "Game Closes in 2"
-                countdown_stage = 4
-            elif current_time >= start_time + 4 and current_time <= start_time +5 and countdown_stage != 5:
-                self.prompt_string = "Game Closes in 1"
-                countdown_stage = 5
-            elif current_time >= start_time + 5:
-                break
-
-
     def play(self):
+        start_time = time.time()
 
         while True: 
             
-            #self.video_prediction()
-            #self.video_overlay()
+            self.video_prediction()
+            self.video_overlay()
+            current_time = time.time()
             
+            if current_time - start_time >= 1:
+                self.timer -= 1
+                start_time = time.time()
+
             if cv2.waitKey(1) & 0xFF == ord('q'):   # Press q to close the window
                 break
     
-            self.showhand_countdown()
-            self.get_computer_choice()
-            self.user_choice = self.current_choice
             
-            #while self.user_choice != "nothing":
-            #    self.video_prediction()
-            #    self.video_overlay()
-            #    self.user_choice = self.current_choice  
+            if self.showhand_counter == True:
+                self.prompt_start = "Show hand in "
+                if self.timer <= 0:
+                    self.get_computer_choice()
+                    self.user_choice = self.current_choice
+                    
+                    #while self.user_choice != "nothing":
+                    #    self.video_prediction()
+                    #    self.video_overlay()
+                    #    self.user_choice = self.current_choice  
 
-            self.get_winner()
-            self.nextround_counter()
+                    self.get_winner()
+                    self.showhand_counter = False
+                    self.timer = 5
+                    self.nextround_counter = True
+            elif self.nextround_counter == True:
+                self.prompt_start = "Next round in "
+                if self.timer <= 0:
+                    self.nextround_counter = False
+                    self.timer = 3
+                    self.showhand_counter = True
+            elif self.endgame_counter == True:
+                self.prompt_start = "Game Ends in "
+                if self.timer <= 0:
+                    # After the loop release the cap object
+                    self.cap.release()
+                    # Destroy all the windows
+                    cv2.destroyAllWindows()
+                    break
+            
 
             if self.user_wins >= 3 or self.computer_wins >= 3:
-                self.endgame_countdown
-                # After the loop release the cap object
-                self.cap.release()
-                # Destroy all the windows
-                cv2.destroyAllWindows()
-                break
+                if self.user_wins == 3:
+                    self.winner_string = "User Won Overall!"
+                elif self.computer_wins == 3:
+                    self.winner_string = "Computer Won Overall"
+                self.user_wins = 0
+                self.computer_wins = 0
+                self.endgame_counter = True
+                self.nextround_counter = False
+                self.showhand_counter = False
+                self.timer = 5
+
             
 
 
